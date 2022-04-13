@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/users/user.entity';
+import { UsersModule } from 'src/users/users.module';
 import {Association} from './association.entity'
 
 const associations:Association[] = [
@@ -50,7 +51,7 @@ export class AssociationsService {
 
     getMembers(id:number):User[]{
         const as:Association  = associations.find(x=>x.id===id)
-        //TODO: return tout les users associéà l'association
+        const listUs:User[]= null;
         return null
     }
 }
