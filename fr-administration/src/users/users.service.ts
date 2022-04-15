@@ -27,11 +27,11 @@ export class UsersService {
     }
 
     public async getUserByID(id:number):Promise<User>{
-        return this.repository.findOne(id)
+        return this.repository.findOne(+id)
     }
 
     public async UpdateUserByID(id:number,lastname:string,firstname:string,age:number):Promise<User>{
-        const us = await this.getUserByID(id)
+        const us = await this.getUserByID(+id)
 
         if (firstname !== undefined) {
              us.firstname = firstname

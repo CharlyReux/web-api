@@ -36,15 +36,15 @@ export class AssociationsService {
     }
 
     public async getAssociations() {
-        return associations
+        return this.repository
     }
 
-    public async getAssociationByID(id:number):Association{
-        return associations.find(x => x.id === +id)
+    public async getAssociationByID(id:number):Promise<Association>{
+        return this.repository.findOne(+id)
     }
 
     public async UpdateAssociationByID(id:number,idUsers:number[], name:string):Association{
-        const as = associations.find(x => x.id === +id)
+        const as = await this.repository.findOne(+id)
         if(idUsers !== undefined) {
             as.users = idUsers.map((x)=>this.service.getUserByID(x))
         }
