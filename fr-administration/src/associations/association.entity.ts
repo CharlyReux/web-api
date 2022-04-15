@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 export class Association{
     @PrimaryGeneratedColumn()
     id:number
-    @Column()
+    @OneToMany(() =>User,user=>user)
     users:User[]
     @Column()
     name:string

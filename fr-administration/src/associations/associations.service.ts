@@ -8,6 +8,7 @@ import {Association} from './association.entity'
 
 
 
+
 @Injectable()
 export class AssociationsService {
     currentId: number = 0
@@ -32,21 +33,33 @@ export class AssociationsService {
         })
         this.repository.save(as)
         return as
+        //TODO:Erreur lors de la création d'une deuxième association:
+        //curl -X POST -d "firstname=Jane&lastname=Doe" http://localhost:3000/users/
+        //curl -X POST -d "firstname=Jhon&lastname=Doe" http://localhost:3000/users/
+        //curl -X POST -d "idUsers[]=1&name=Assoc1" http://localhost:3000/associations/
+        //curl -X POST -d "idUsers[]=1&name=Assoc2" http://localhost:3000/associations/
 
+        //Pas oublier de creer les deux bases de données:
+        //sqlite mydatabase.db et "".db.old
     }
 
     public async getAssociations() {
-        return this.repository
+        return this.repository.find()
     }
 
     public async getAssociationByID(id:number):Promise<Association>{
         return this.repository.findOne(+id)
     }
 
-    public async UpdateAssociationByID(id:number,idUsers:number[], name:string):Association{
+    public async UpdateAssociationByID(id:number,idUsers:number[], name:string):Promise<Association>{
         const as = await this.repository.findOne(+id)
         if(idUsers !== undefined) {
-            as.users = idUsers.map((x)=>this.service.getUserByID(x))
+            var tmpUsers:User[] = []
+            for (let i = 0; i < idUsers.length; i++) {
+                const element = await this.service.getUserByID(idUsers[i]);
+                tmpUsers.push(element)
+            }
+            as.users = tmpUsers
         }
         if(name !== undefined) {
             as.name = name
@@ -54,16 +67,12 @@ export class AssociationsService {
         return as
     }
 
-    public async DeleteAssociationByID(id:number):boolean{
-        const before: number = associations.length
-
-        associations.splice(+id,1)
-
-        return before!==associations.length;
+    public async DeleteAssociationByID(id:number):Promise<boolean>{
+        return (await this.repository.delete(id)).affected!=0;
     }
 
-    public async getMembers(id:number):User[]{
-        const as:Association  = associations.find(x=>x.id===+id)
+    public async getMembers(id:number):Promise<User[]>{
+        const as:Association  = await this.repository.findOne(+id)
         return as.users
     }
 }

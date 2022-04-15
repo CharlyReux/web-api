@@ -47,7 +47,7 @@ export class UsersService {
 
     }
     public async DeleteUserByID(id:number):Promise<boolean>{
-        return (await this.repository.delete(id)).affected!=null;
+        return (await this.repository.delete(id)).affected!=0;
     }
     
 }
