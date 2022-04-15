@@ -11,12 +11,12 @@ export class AssociationsController {
     ){}
 
     @Get()
-    get(): Association[] {
+    public async get(): Promise<Association[]> {
         return this.service.getAssociations()
     }
 
     @Get(':id')
-    getAssociationByID(@Param('id') id: number): Association {
+    public async getAssociationByID(@Param('id') id: number): Promise<Association> {
         const as=this.service.getAssociationByID(id)
         if(as==undefined){
             throw new HttpException('Could not find an association with the id '+id,HttpStatus.NOT_FOUND)
@@ -25,7 +25,7 @@ export class AssociationsController {
     }
 
     @Put(':id')
-    UpdateAssociationByID(@Param('id') id: number, @Body() input: any) :Association {
+    public async UpdateAssociationByID(@Param('id') id: number, @Body() input: any) :Promise<Association> {
         const as = this.service.UpdateAssociationByID(id,input.idUsers,input.name)
         if(as==undefined){
             throw new HttpException('Could not find an association with the id '+id,HttpStatus.NOT_FOUND)
@@ -35,7 +35,7 @@ export class AssociationsController {
     }
 
     @Delete(':id')
-    DeleteAssociationByID(@Param('id')id: number):Boolean{
+    public async DeleteAssociationByID(@Param('id')id: number):Promise<Boolean>{
 
         if(this.service.getAssociationByID(id)==undefined){
             throw new HttpException('Could not find an association with the id '+id,HttpStatus.NOT_FOUND)
@@ -44,12 +44,12 @@ export class AssociationsController {
     }
 
     @Post()
-    create(@Body() input: any): Association {
+    public async create(@Body() input: any): Promise<Association> {
        return this.service.create(input.idUsers,input.name)
     }
 
     @Get(':id/members')
-    getMembers(@Param() parameter): User[] {
+    public async getMembers(@Param() parameter): Promise<User[]> {
         return this.service.getMembers(parameter.id)
     }
 

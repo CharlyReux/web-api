@@ -1,39 +1,52 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UsersModule } from 'src/users/users.module';
+import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
 import {Association} from './association.entity'
 
-const associations:Association[] = [
-    {
-        id:0,
-        idUsers:[0],
-        name:"FirstAssoc"
-    }
-]
+
 
 @Injectable()
 export class AssociationsService {
     currentId: number = 0
 
-    create(idUsers: number[], name: string) {
-        const as:Association = new Association(++this.currentId, idUsers, name)
-        associations.push(as)
+    constructor(    
+        private service: UsersService,
+        @InjectRepository(Association)
+        private repository: Repository<Association>
+        ){}
+
+    public async create(idUsers: number[], name: string) {
+        var tmpUsers:User[] = []
+        for (let i = 0; i < idUsers.length; i++) {
+            const element = await this.service.getUserByID(idUsers[i]);
+            tmpUsers.push(element)
+        }
+
+        const as:Association = this.repository.create({
+            id: ++this.currentId,
+            name: name,
+            users: tmpUsers
+        })
+        this.repository.save(as)
         return as
 
     }
 
-    getAssociations() {
+    public async getAssociations() {
         return associations
     }
 
-    getAssociationByID(id:number):Association{
+    public async getAssociationByID(id:number):Association{
         return associations.find(x => x.id === +id)
     }
 
-    UpdateAssociationByID(id:number,idUsers:number[], name:string):Association{
+    public async UpdateAssociationByID(id:number,idUsers:number[], name:string):Association{
         const as = associations.find(x => x.id === +id)
         if(idUsers !== undefined) {
-            as.idUsers = idUsers
+            as.users = idUsers.map((x)=>this.service.getUserByID(x))
         }
         if(name !== undefined) {
             as.name = name
@@ -41,7 +54,7 @@ export class AssociationsService {
         return as
     }
 
-    DeleteAssociationByID(id:number):boolean{
+    public async DeleteAssociationByID(id:number):boolean{
         const before: number = associations.length
 
         associations.splice(+id,1)
@@ -49,9 +62,8 @@ export class AssociationsService {
         return before!==associations.length;
     }
 
-    getMembers(id:number):User[]{
-        const as:Association  = associations.find(x=>x.id===id)
-        const listUs:User[]= null;
-        return null
+    public async getMembers(id:number):User[]{
+        const as:Association  = associations.find(x=>x.id===+id)
+        return as.users
     }
 }

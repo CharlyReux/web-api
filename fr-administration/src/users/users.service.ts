@@ -1,39 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
-
-
-const users: User[] = [
-    {
-        id: 0,
-        lastname: 'Doe',
-        firstname: 'John',
-        age:23
-    }
-]
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
     currentId: number = 0
 
-    create(lastname: string, firstname: string, age: number):User{
-        const us: User = new User(++this.currentId, lastname,firstname,age)
-        users.push(us)
+    constructor(
+        @InjectRepository(User)
+        private repository: Repository<User>
+    ) {}
+
+    public async create(lastname: string, firstname: string, age: number):Promise<User>{
+        const us: User =await this.repository.create({
+            id: ++this.currentId, 
+            lastname: lastname, 
+            firstname: firstname, 
+            age: age 
+        })
+        this.repository.save(us)
         return us
     }
-    getUsers(){
-        return users
+    public async getUsers():Promise<User[]>{
+        return this.repository.find()//maybe wrong
     }
 
-    getUserByID(id:number):User{
-        return users.find(x => x.id === +id)
+    public async getUserByID(id:number):Promise<User>{
+        return this.repository.findOne(id)
     }
 
-    UpdateUserByID(id:number,lastname:string,firstname:string,age:number):User{
-        const us = users.find(x => x.id === +id)
+    public async UpdateUserByID(id:number,lastname:string,firstname:string,age:number):Promise<User>{
+        const us = await this.getUserByID(id)
 
         if (firstname !== undefined) {
-            us.firstname = firstname
+             us.firstname = firstname
         }
         if (lastname !== undefined) {
             us.lastname = lastname
@@ -41,15 +42,12 @@ export class UsersService {
         if (lastname !== undefined) {
             us.age = +age
         }
+        this.repository.save(us)
         return us;
 
     }
-    DeleteUserByID(id:number):boolean{
-        const before: number = users.length
-
-        users.splice(+id,1)
-
-        return before!==users.length;
+    public async DeleteUserByID(id:number):Promise<boolean>{
+        return (await this.repository.delete(id)).affected!=null;
     }
     
 }

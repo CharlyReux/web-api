@@ -20,12 +20,12 @@ export class UsersController {
     }
 
     @Get()
-    get(): User[] {
+    public async get(): Promise<User[]> {
         return this.service.getUsers()
     }
 
     @Get(':id')
-    getUserByID(@Param('id') id: number): User {
+    public async getUserByID(@Param('id') id: number): Promise<User> {
         const us=this.service.getUserByID(id)
         if(us==undefined){
             throw new HttpException('Could not find a user with th id '+id,HttpStatus.NOT_FOUND)
@@ -34,7 +34,7 @@ export class UsersController {
     }
 
     @Put(':id')
-    UpdateUserByID(@Param('id') id: number, @Body() input: any) :User {
+    public async UpdateUserByID(@Param('id') id: number, @Body() input: any) :Promise<User> {
         const us = this.service.UpdateUserByID(id,input.lastname,input.firstname,input.age)
         if(us==undefined){
             throw new HttpException('Could not find a user with th id '+id,HttpStatus.NOT_FOUND)
@@ -44,7 +44,7 @@ export class UsersController {
     }
 
     @Delete(':id')
-    DeleteUserByID(@Param('id')id: number):Boolean{
+    public async DeleteUserByID(@Param('id')id: number):Promise<Boolean>{
 
         if(this.service.getUserByID(id)==undefined){
             throw new HttpException('Could not find a user with th id '+id,HttpStatus.NOT_FOUND)
@@ -55,7 +55,7 @@ export class UsersController {
 
 
     @Post()
-    create(@Body() input: any): User {
+    public async create(@Body() input: any): Promise<User> {
        return this.service.create(input.lastname,input.firstname,input.age)
     }
 
