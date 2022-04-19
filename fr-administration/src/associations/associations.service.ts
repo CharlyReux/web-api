@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import {Association} from './association.entity'
 
 
@@ -25,7 +25,6 @@ export class AssociationsService {
             const element = await this.service.getUserByID(idUsers[i]);
             tmpUsers.push(element)
         }
-
         const as:Association = this.repository.create({
             id: ++this.currentId,
             name: name,
@@ -34,8 +33,8 @@ export class AssociationsService {
         this.repository.save(as)
         return as
         //TODO:Erreur lors de la création d'une deuxième association:
-        //curl -X POST -d "firstname=Jane&lastname=Doe" http://localhost:3000/users/
-        //curl -X POST -d "firstname=Jhon&lastname=Doe" http://localhost:3000/users/
+        //curl -X POST -d "firstname=Jane&lastname=Doe&age=20" http://localhost:3000/users/
+        //curl -X POST -d "firstname=Jhon&lastname=Doe&age=18" http://localhost:3000/users/
         //curl -X POST -d "idUsers[]=1&name=Assoc1" http://localhost:3000/associations/
         //curl -X POST -d "idUsers[]=1&name=Assoc2" http://localhost:3000/associations/
 
@@ -44,15 +43,15 @@ export class AssociationsService {
     }
 
     public async getAssociations() {
-        return this.repository.find()
+        return this.repository.find({relations:["users"]})
     }
 
     public async getAssociationByID(id:number):Promise<Association>{
-        return this.repository.findOne(+id)
+        return this.repository.findOne({id:Equal(+id)})
     }
 
     public async UpdateAssociationByID(id:number,idUsers:number[], name:string):Promise<Association>{
-        const as = await this.repository.findOne(+id)
+        const as = await this.repository.findOne({id:Equal(+id)})
         if(idUsers !== undefined) {
             var tmpUsers:User[] = []
             for (let i = 0; i < idUsers.length; i++) {
@@ -68,11 +67,11 @@ export class AssociationsService {
     }
 
     public async DeleteAssociationByID(id:number):Promise<boolean>{
-        return (await this.repository.delete(id)).affected!=0;
+        return (await this.repository.delete({id:Equal(+id)})).affected!=0;
     }
 
     public async getMembers(id:number):Promise<User[]>{
-        const as:Association  = await this.repository.findOne(+id)
+        const as:Association  = await this.repository.findOne({id:Equal(+id)})
         return as.users
     }
 }

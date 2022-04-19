@@ -1,33 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UsersService {
     currentId: number = 0
+
 
     constructor(
         @InjectRepository(User)
         private repository: Repository<User>
     ) {}
 
-    public async create(lastname: string, firstname: string, age: number):Promise<User>{
-        const us: User =await this.repository.create({
+    public async create(lastname: string, firstname: string, age: number,password:string):Promise<User>{
+        const saltOrRounds = 10;
+        const hash = await bcrypt.hash(password, saltOrRounds);
+        const us: User = this.repository.create({
             id: ++this.currentId, 
             lastname: lastname, 
             firstname: firstname, 
-            age: age 
+            age: age,
+            password:hash 
         })
         this.repository.save(us)
         return us
     }
     public async getUsers():Promise<User[]>{
-        return this.repository.find()//maybe wrong
+        return this.repository.find()
     }
 
     public async getUserByID(id:number):Promise<User>{
-        return this.repository.findOne(+id)
+        return this.repository.findOne({id:Equal(+id)})
     }
 
     public async UpdateUserByID(id:number,lastname:string,firstname:string,age:number):Promise<User>{
@@ -47,7 +53,7 @@ export class UsersService {
 
     }
     public async DeleteUserByID(id:number):Promise<boolean>{
-        return (await this.repository.delete(id)).affected!=0;
+        return (await this.repository.delete({id:Equal(+id)})).affected!=0;
     }
     
 }

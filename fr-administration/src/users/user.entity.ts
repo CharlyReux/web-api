@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Association } from "src/associations/association.entity"
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class User{
@@ -10,6 +11,9 @@ export class User{
     firstname:string
     @Column()
     age:number
+    @Column()
+    password:string
+
 
     constructor(id:number, lastname:string,firstname:string,age:number){
         this.id=id

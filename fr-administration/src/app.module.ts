@@ -6,6 +6,7 @@ import { AssociationsModule } from './associations/associations.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { Association } from './associations/association.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { Association } from './associations/association.entity';
       ],
       synchronize: true,
     }),
-    UsersModule, AssociationsModule],
+    UsersModule, AssociationsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

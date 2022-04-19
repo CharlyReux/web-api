@@ -1,11 +1,13 @@
-import { Controller, Body, Post, Get, Param, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Body, Post, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { create } from 'domain';
 
 import { User } from './user.entity';
+import { UserInput } from './UserInput';
 import { UsersService } from './users.service';
 
-
-
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
 
@@ -13,12 +15,12 @@ export class UsersController {
         private service:UsersService
     ){}
 
-
     @Get('all')
     getAll(): string[] {
         return ['a', 'b', 'c'];
     }
-
+    
+    @UseGuards(AuthGuard('jwt'))
     @Get()
     public async get(): Promise<User[]> {
         return this.service.getUsers()
@@ -34,7 +36,7 @@ export class UsersController {
     }
 
     @Put(':id')
-    public async UpdateUserByID(@Param('id') id: number, @Body() input: any) :Promise<User> {
+    public async UpdateUserByID(@Param('id') id: number, @Body() input: UserInput) :Promise<User> {
         const us = this.service.UpdateUserByID(id,input.lastname,input.firstname,input.age)
         if(us==undefined){
             throw new HttpException('Could not find a user with th id '+id,HttpStatus.NOT_FOUND)
@@ -55,8 +57,11 @@ export class UsersController {
 
 
     @Post()
-    public async create(@Body() input: any): Promise<User> {
-       return this.service.create(input.lastname,input.firstname,input.age)
+    @ApiCreatedResponse({
+        description: 'The user has been successfully created.'
+    })
+    public async create(@Body() input: UserInput): Promise<User> {
+       return this.service.create(input.lastname,input.firstname,input.age,input.password)
     }
 
 }

@@ -2,7 +2,10 @@ import { Controller, Body, Post, Get, Param, Put, Delete, HttpException, HttpSta
 import { Association } from './association.entity';
 import { AssociationsService } from './associations.service';
 import { User } from 'src/users/user.entity';
+import { ApiTags } from '@nestjs/swagger';
+import { AssociationInput } from './AssociationInput';
 
+@ApiTags('Associations')
 @Controller('associations')
 export class AssociationsController {
 
@@ -44,7 +47,7 @@ export class AssociationsController {
     }
 
     @Post()
-    public async create(@Body() input: any): Promise<Association> {
+    public async create(@Body() input: AssociationInput): Promise<Association> {
        return this.service.create(input.idUsers,input.name)
     }
 

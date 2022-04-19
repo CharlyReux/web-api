@@ -1,11 +1,12 @@
 import { User } from "src/users/user.entity"
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class Association{
     @PrimaryGeneratedColumn()
     id:number
-    @OneToMany(() =>User,user=>user)
+    @ManyToMany(()=>User)
+    @JoinTable()
     users:User[]
     @Column()
     name:string
