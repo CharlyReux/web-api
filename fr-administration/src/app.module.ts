@@ -10,6 +10,10 @@ import { AuthModule } from './auth/auth.module';
 import { RoleService } from './role/role.service';
 import { RoleModule } from './role/role.module';
 import { Role } from './role/role.entity';
+import { MinuteService } from './minute/minute.service';
+import { MinuteController } from './minute/minute.controller';
+import { MinuteModule } from './minute/minute.module';
+import { Minute } from './minute/minute.entity';
 
 @Module({
   imports: [
@@ -19,11 +23,12 @@ import { Role } from './role/role.entity';
       entities: [
         User,
         Association,
-        Role
+        Role,
+        Minute
       ],
       synchronize: true,
     }),
-    UsersModule, AssociationsModule, AuthModule, RoleModule],
+    UsersModule, AssociationsModule, AuthModule, RoleModule, MinuteModule],
   controllers: [AppController],
   providers: [AppService],
 })

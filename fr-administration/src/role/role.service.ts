@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Association } from 'src/associations/association.entity';
 import { AssociationsService } from 'src/associations/associations.service';

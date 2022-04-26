@@ -38,7 +38,7 @@ export class RoleController {
     }
 
     @Delete(':idUser/:idAssoc')
-    public async DeleteRoleByID(@Param('idUser') idUser: number, @Param('idAssoc') idAssoc: number, @Body() input: RoleUpdate): Promise<Boolean> {
+    public async DeleteRoleByID(@Param('idUser') idUser: number, @Param('idAssoc') idAssoc: number): Promise<Boolean> {
         if(this.service.getRoleByID(idUser,idAssoc)==undefined){
             throw new HttpException('Could not find an Role with the specified ids ',HttpStatus.NOT_FOUND)
         }
