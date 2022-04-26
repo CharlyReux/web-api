@@ -1,5 +1,6 @@
+import { Role } from "src/role/role.entity"
 import { User } from "src/users/user.entity"
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class Association{

@@ -32,14 +32,6 @@ export class AssociationsService {
         })
         this.repository.save(as)
         return as
-        //TODO:Erreur lors de la création d'une deuxième association:
-        //curl -X POST -d "firstname=Jane&lastname=Doe&age=20" http://localhost:3000/users/
-        //curl -X POST -d "firstname=Jhon&lastname=Doe&age=18" http://localhost:3000/users/
-        //curl -X POST -d "idUsers[]=1&name=Assoc1" http://localhost:3000/associations/
-        //curl -X POST -d "idUsers[]=1&name=Assoc2" http://localhost:3000/associations/
-
-        //Pas oublier de creer les deux bases de données:
-        //sqlite mydatabase.db et "".db.old
     }
 
     public async getAssociations() {
@@ -63,6 +55,7 @@ export class AssociationsService {
         if(name !== undefined) {
             as.name = name
         }
+        this.repository.save(as)
         return as
     }
 
