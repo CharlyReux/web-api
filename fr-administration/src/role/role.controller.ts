@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { User } from 'src/users/user.entity';
 import { Role } from './role.entity';
 import { RoleService } from './role.service';
 import { RoleInput } from './RoleInput';
@@ -43,6 +44,12 @@ export class RoleController {
             throw new HttpException('Could not find an Role with the specified ids ',HttpStatus.NOT_FOUND)
         }
         return this.service.DeleteRoleByID(idUser,idAssoc)
+    }
+
+    @Get(':name')
+    public async GetUsersByRole(@Param('name') RoleName: string):Promise<User[]>{
+        console.log("alo")
+        return this.service.GetUsersByRole(RoleName)
     }
 
 

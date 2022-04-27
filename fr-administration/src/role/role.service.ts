@@ -5,15 +5,15 @@ import { Association } from 'src/associations/association.entity';
 import { AssociationsService } from 'src/associations/associations.service';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { Role } from './role.entity';
 
 @Injectable()
 export class RoleService {
     constructor(
-        @Inject(forwardRef(()=>UsersService))
+        @Inject(forwardRef(() => UsersService))
         private userServ: UsersService,
-        @Inject(forwardRef(()=>AssociationsService))
+        @Inject(forwardRef(() => AssociationsService))
         private assocServ: AssociationsService,
         @InjectRepository(Role)
         private repository: Repository<Role>
@@ -52,17 +52,33 @@ export class RoleService {
         return tmpRole
     }
     public async DeleteRoleByID(idUser: number, idAssoc: number): Promise<Boolean> {
-        return (await this.repository.delete(await this.getRoleByID(idUser,idAssoc)
+        return (await this.repository.delete(await this.getRoleByID(idUser, idAssoc)
         )).affected != 0;
 
     }
 
-    public async GetRolesByUserID(idUser:number):Promise<Role[]>{
+    public async GetRolesByUserID(idUser: number): Promise<Role[]> {
         return this.repository.find({
-            where:{
+            where: {
                 user: { id: idUser }
             }
         })
+    }
+
+    public async GetUsersByRole(RoleName: string): Promise<User[]> {
+        const allRoles: Role[] = await this.repository.find({
+            where:
+            {
+                name: Equal(RoleName),
+            },
+            relations: ["user"]
+        })
+        var allUsers: User[] = []
+        allRoles.forEach(rol => {
+            allUsers.push(rol.user)
+        });
+        console.log("oui"+allUsers)
+        return allUsers
     }
 
 }
