@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Association } from 'src/associations/association.entity';
@@ -11,7 +11,9 @@ import { Role } from './role.entity';
 @Injectable()
 export class RoleService {
     constructor(
+        @Inject(forwardRef(()=>UsersService))
         private userServ: UsersService,
+        @Inject(forwardRef(()=>AssociationsService))
         private assocServ: AssociationsService,
         @InjectRepository(Role)
         private repository: Repository<Role>
@@ -53,6 +55,14 @@ export class RoleService {
         return (await this.repository.delete(await this.getRoleByID(idUser,idAssoc)
         )).affected != 0;
 
+    }
+
+    public async GetRolesByUserID(idUser:number):Promise<Role[]>{
+        return this.repository.find({
+            where:{
+                user: { id: idUser }
+            }
+        })
     }
 
 }

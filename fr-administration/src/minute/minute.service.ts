@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AssociationDTO } from 'src/associations/association.dto';
 import { Association } from 'src/associations/association.entity';
 import { AssociationsService } from 'src/associations/associations.service';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { Minute } from './minute.entity';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class MinuteService {
     ) { }
 
     public async getMinute(): Promise<Minute[]> {
-        return this.repository.find()
+        return this.repository.find({relations:["voters"]})
     }
 
     public async create(content: string, date: string, idAssociation: number, idVoters: number[]): Promise<Minute> {
@@ -29,7 +30,7 @@ export class MinuteService {
             tmpUsers.push(element)
         }
         const tmpMinute: Minute = this.repository.create({
-            Voters: tmpUsers,
+            voters: tmpUsers,
             content: content,
             date: date,
             association: tmpAssoc
@@ -42,16 +43,13 @@ export class MinuteService {
         return this.repository.find({
             where: {
                 association: { id: idAssoc }
-            }
+            },
+            relations:["voters"]
         })
     }
 
     public async getMinuteByID(id: number): Promise<Minute> {
-        return this.repository.findOne({
-            where: {
-                idMinute: id
-            }
-        })
+        return this.repository.findOne({idMinute:Equal(+id) },{relations:["voters"]})
     }
 
     public async UpdateMinuteByID(id: number, content: string, date: string, idAssociation: number, idVoters: number[]): Promise<Minute> {
@@ -64,7 +62,7 @@ export class MinuteService {
             tmpMinute.date = date
         }
         if (idAssociation !== undefined) {
-            tmpMinute.association = await this.assocServ.getAssociationByID(idAssociation)
+            tmpMinute.association =  await this.assocServ.getAssociationByID(idAssociation)
         }
         if (idVoters !== undefined) {
             var tmpUsers: User[] = []
@@ -72,7 +70,7 @@ export class MinuteService {
                 const element = await this.userServ.getUserByID(idVoters[i]);
                 tmpUsers.push(element)
             }
-            tmpMinute.Voters = tmpUsers
+            tmpMinute.voters = tmpUsers
         }
         this.repository.save(tmpMinute)
         return tmpMinute

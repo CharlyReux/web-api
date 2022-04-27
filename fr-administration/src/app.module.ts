@@ -14,6 +14,8 @@ import { MinuteService } from './minute/minute.service';
 import { MinuteController } from './minute/minute.controller';
 import { MinuteModule } from './minute/minute.module';
 import { Minute } from './minute/minute.entity';
+import { AssociationFormModule } from './association-form/association-form.module';
+import { AssociationForm } from './association-form/association-form.entity';
 
 @Module({
   imports: [
@@ -24,11 +26,12 @@ import { Minute } from './minute/minute.entity';
         User,
         Association,
         Role,
-        Minute
+        Minute,
+        AssociationForm
       ],
       synchronize: true,
     }),
-    UsersModule, AssociationsModule, AuthModule, RoleModule, MinuteModule],
+    UsersModule, AssociationsModule, AuthModule, RoleModule, MinuteModule, AssociationFormModule],
   controllers: [AppController],
   providers: [AppService],
 })

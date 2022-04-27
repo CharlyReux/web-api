@@ -5,7 +5,7 @@ export class AssociationInput {
 
     @ApiProperty({
         description: 'The list of ids of users in the association',
-        example: '{1,2}',
+        example: '[1,2]',
         type: [Number],
     })
     public idUsers: number[];

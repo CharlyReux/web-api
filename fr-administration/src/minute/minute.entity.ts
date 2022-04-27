@@ -12,7 +12,7 @@ export class Minute{
     date:string
     @ManyToMany(()=>User)
     @JoinTable()
-    Voters:User[]
+    voters:User[]
     @ManyToOne(type=>Association)
     association:Association
 

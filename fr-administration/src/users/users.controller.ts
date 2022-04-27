@@ -2,6 +2,7 @@ import { Controller, Body, Post, Get, Param, Put, Delete, HttpException, HttpSta
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { create } from 'domain';
+import { Role } from 'src/role/role.entity';
 
 import { User } from './user.entity';
 import { UserInput } from './UserInput';
@@ -62,6 +63,11 @@ export class UsersController {
     })
     public async create(@Body() input: UserInput): Promise<User> {
        return this.service.create(input.lastname,input.firstname,input.age,input.password)
+    }
+
+    @Get(":id/roles")
+    public async getRoleByUserID(@Param('id')id:number):Promise<Role[]>{
+        return this.service.getRoleByUserID(id)
     }
 
 }
