@@ -1,12 +1,15 @@
 # Project-JXT_REUX_THOMAS
 
+## Contexte
+Ce projet est un projet d'un cours nommé JXT-Webserver Engineering.
+Le but étais de créer une API selon une spécification donnée.
+
 
 ## Telecharger et lancer l'API
 
 D'abord, commencer par récupérer le projet
 ```
-cd existing_repo
-git clone https://gitlab.istic.univ-rennes1.fr/creux/project-jxt_reux_thomas.git
+git clone https://gitlab.com/charlyreux/web-api.git
 ```
 
 
